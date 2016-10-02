@@ -2,6 +2,7 @@
 #define EASYMOTION_H
 
 #include "easymotion_global.h"
+#include "EasyMotionHandler.h"
 
 #include <extensionsystem/iplugin.h>
 
@@ -25,6 +26,7 @@ public:
 private slots:
 private:
   EasyMotionHandler* m_handler;
+
 };
 
 } // namespace Internal

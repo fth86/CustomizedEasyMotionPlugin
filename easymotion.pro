@@ -1,21 +1,30 @@
 DEFINES += EASYMOTION_LIBRARY
-#DIR="/Users/dj/qt-creator-opensource-src-3.3.0"
+#DIR="/home/fthevissen/work/qtcreatorp"
 
 # EasyMotion files
 
-SOURCES += easymotionplugin.cpp
+SOURCES += \
+    EasyMotionHandler.cpp \
+    EasyMotionPlugin.cpp \
+    EasyMotionTarget.cpp
 
-HEADERS += easymotionplugin.h \
+HEADERS += \
         easymotion_global.h \
-        easymotionconstants.h
+    EasyMotionTarget.h \
+    EasyMotionPlugin.h \
+    EasyMotionHandler.h \
+    EasyMotionConstants.h
 
-## set the QTC_SOURCE environment variable to override the setting here
-QTCREATOR_SOURCES = $$(QTC_SOURCE)
-isEmpty(QTCREATOR_SOURCES):QTCREATOR_SOURCES="$$DIR"
+## Either set the IDE_SOURCE_TREE when running qmake,
+## or set the QTC_SOURCE environment variable, to override the default setting
+#isEmpty(IDE_SOURCE_TREE): IDE_SOURCE_TREE = $$(QTC_SOURCE)
+isEmpty(IDE_SOURCE_TREE): IDE_SOURCE_TREE = "/home/fthevissen/work/qtcreatorp"
 
-## set the QTC_BUILD environment variable to override the setting here
-IDE_BUILD_TREE = $$(QTC_BUILD)
-isEmpty(IDE_BUILD_TREE):IDE_BUILD_TREE="$$DIR"
+## Either set the IDE_BUILD_TREE when running qmake,
+## or set the QTC_BUILD environment variable, to override the default setting
+#isEmpty(IDE_BUILD_TREE): IDE_BUILD_TREE = $$(QTC_BUILD)
+isEmpty(IDE_BUILD_TREE): IDE_BUILD_TREE = "/home/fthevissen/work/qtcreatorp"
+
 
 ## uncomment to build plugin into user config directory
 ## <localappdata>/plugins/<ideversion>
@@ -44,5 +53,5 @@ QTC_PLUGIN_RECOMMENDS += \
 
 ###### End _dependencies.pri contents ######
 
-include($$QTCREATOR_SOURCES/src/qtcreatorplugin.pri)
+include($$IDE_SOURCE_TREE/src/qtcreatorplugin.pri)
 
