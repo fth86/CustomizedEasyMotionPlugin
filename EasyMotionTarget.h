@@ -1,6 +1,8 @@
 #ifndef EASYMOTIONTARGET_H
 #define EASYMOTIONTARGET_H
 
+#include <boost/foreach.hpp>
+
 #include <coreplugin/icore.h>
 #include <coreplugin/icontext.h>
 #include <coreplugin/actionmanager/actionmanager.h>
@@ -40,85 +42,43 @@ class EasyMotionTarget : public QObject
 public:
   EasyMotionTarget(void);
 
+  // ------------------------------------------------------------------------------------
   template <class QEditor>
-  void searchTargetFromCurrentLine(QEditor *editor)
+  void searchTargetFromScreen(QEditor *editor, const QString& target)
   {
     m_targetPos.clear();
-    if (editor == NULL) {
-      return;
-    }
-    m_currentGroup = 0;
-    QTextDocument *doc = editor->document();
-    int cursorPos = editor->textCursor().position();
-    QTextBlock currentLineBlock = doc->findBlock(cursorPos);
-    int firstPos = currentLineBlock.position();
-    int lastPos = firstPos + currentLineBlock.length() - 1;
-    for (int offset = 1; cursorPos - offset >= firstPos || cursorPos + offset <= lastPos; offset++) {
-      if (cursorPos + offset <= lastPos) {
-        m_targetPos << (cursorPos + offset);
-      }
-      if (cursorPos - offset >= firstPos) {
-        m_targetPos << (cursorPos - offset);
-      }
-    }
-  }
 
-  template <class QEditor>
-  void searchTargetFromScreen(QEditor *editor, const QChar &target)
-  {
-    m_targetPos.clear();
     if (editor == NULL) {
       return;
     }
-    m_currentGroup = 0;
-    m_targetChar = target;
+
     QTextDocument *doc = editor->document();
-    int cursorPos = editor->textCursor().position();
     QPair<int, int> visibleRange = getFirstAndLastVisiblePosition(editor);
     int  firstPos = visibleRange.first;
     int lastPos = visibleRange.second;
-    bool notCaseSensative = target.category() != QChar::Letter_Uppercase;
+    //  bool notCaseSensative = target.category() != QChar::Letter_Uppercase;
 
-    // -- previous:  character matching
-    for (int offset = 1; cursorPos - offset >= firstPos || cursorPos + offset <= lastPos; offset++) {
-      if (cursorPos + offset <= lastPos) {
-        QChar c = doc->characterAt(cursorPos + offset);
-        if (notCaseSensative) {
-          c = c.toLower();
+    // -- word matching  ------------------
+    QTextCursor previousResult = doc->find(target, firstPos);
+    if(previousResult.isNull())
+        return;
+
+    m_targetPos << previousResult.anchor() - 1;
+
+    bool searchInProgress = true;
+    while( searchInProgress ){
+        QTextCursor result = doc->find(target, previousResult);
+        if( result.isNull() || result.position() > lastPos)
+            searchInProgress=false;
+        else{
+            m_targetPos << result.anchor() - 1;
+            previousResult = result;
         }
-        if (c == target) {
-          m_targetPos << (cursorPos + offset);
-        }
-      }
-      if (cursorPos - offset >= firstPos) {
-        QChar c = doc->characterAt(cursorPos - offset);
-        if (notCaseSensative) {
-          c = c.toLower();
-        }
-        if (c == target) {
-          m_targetPos << (cursorPos - offset);
-        }
-      }
     }
 
-    // -- mod:  word matching  ------------------
-//    QTextCursor previousResult = doc->find("word", firstPos);
-//    if(previousResult.isNull)
-//        return;
-
-//    bool searchInProgress = true;
-//    while( searchInProgress ){
-//        QTextCursor result = doc->find("word", previousResult);
-
-//        if( result.isNull())
-//            searchInProgress=false;
-//        else{
-//            m_targetPos << result.position();
-//            previousResult = result;
-//        }
-//    }
   }
 
+  // -----------------------------------------------------------------------------------
   template <class Editor>
   QPair<int, int> getFirstAndLastVisiblePosition(Editor *editor)
   {
@@ -148,19 +108,15 @@ public:
 
   int size() const { return m_targetPos.size();  }
   bool isEmpty() const {  return m_targetPos.size() == 0;  }
-  void nextGroup(void);
-  void previousGroup(void);
   void clear();
   int getFirstTargetIndex(void) const;
   int getLastTargetIndex(void) const;
-  QPair<int, QChar> getTarget(int i) const;
-  int getGroupNum(void);
+  QPair<int, QString> getTarget(int i) const;
   QChar getTargetChar(void) const { return m_targetChar; }
-  int getTargetPos(const QChar &c) const;
+  int getTargetPos(const int code) const;
 
 private:
   int parseCode(const QChar &c) const;
-  void initCode(void);
 
   enum {
     LowerLetterCaseStart = 0,

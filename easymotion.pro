@@ -6,14 +6,16 @@ DEFINES += EASYMOTION_LIBRARY
 SOURCES += \
     EasyMotionHandler.cpp \
     EasyMotionPlugin.cpp \
-    EasyMotionTarget.cpp
+    EasyMotionTarget.cpp \
+    EasyMotionTextEdit.cpp
 
 HEADERS += \
-        easymotion_global.h \
+    easymotion_global.h \
     EasyMotionTarget.h \
     EasyMotionPlugin.h \
     EasyMotionHandler.h \
-    EasyMotionConstants.h
+    EasyMotionConstants.h \
+    EasyMotionTextEdit.h
 
 ## Either set the IDE_SOURCE_TREE when running qmake,
 ## or set the QTC_SOURCE environment variable, to override the default setting
@@ -50,6 +52,27 @@ QTC_PLUGIN_DEPENDS += \
 
 QTC_PLUGIN_RECOMMENDS += \
     # optional plugin dependencies. nothing here at this time
+
+
+# --- Find Boost library --------------------------------------------------------
+# Try to use qmake variable's value.
+_BOOST_ROOT = $$BOOST_ROOT
+isEmpty(_BOOST_ROOT) {
+    message(\"Boost Library\" qmake value not detected...)
+    # Try to use the system environment value.
+    _BOOST_ROOT = $$(BOOST_ROOT)
+}
+
+isEmpty(_BOOST_ROOT) {
+    message(\"Boost Library\" environment variable not detected...)
+    !build_pass:error(Please set the environment variable `BOOST_ROOT`. For example, BOOST_ROOT=c:\\boost_1_53_0)
+} else {
+    message(\"Boost Library\" detected in BOOST_ROOT = \"$$_BOOST_ROOT\")
+    INCLUDEPATH += $$_BOOST_ROOT
+}
+
+LIBS +=
+    -lboost_system
 
 ###### End _dependencies.pri contents ######
 

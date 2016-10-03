@@ -65,12 +65,14 @@ bool EasyMotionPlugin::initialize(const QStringList &arguments, QString *errorSt
                                    Core::Context(Core::Constants::C_GLOBAL));
   searchScreenCmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+;")));
   connect(easyMotionSearchEntireScreen , SIGNAL(triggered()), m_handler, SLOT(easyMotionForEntireScreenTriggered()));
+
+
   //------------------------------------------------------------------------------
-  QAction *easyMotionSearchCurrentLine = new QAction(tr("Search current line"), this);
-  Core::Command *searchCurrentLineCmd = Core::ActionManager::registerAction(easyMotionSearchCurrentLine , Constants::SEARCH_LINE_ID,
-                                        Core::Context(Core::Constants::C_GLOBAL));
-  searchCurrentLineCmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+'")));
-  connect(easyMotionSearchCurrentLine , SIGNAL(triggered()), m_handler, SLOT(easyMotionForCurrentLineTriggered()));
+//  QAction *easyMotionSearchCurrentLine = new QAction(tr("Search current line"), this);
+//  Core::Command *searchCurrentLineCmd = Core::ActionManager::registerAction(easyMotionSearchCurrentLine , Constants::SEARCH_LINE_ID,
+//                                        Core::Context(Core::Constants::C_GLOBAL));
+//  searchCurrentLineCmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+'")));
+//  connect(easyMotionSearchCurrentLine , SIGNAL(triggered()), m_handler, SLOT(easyMotionForCurrentLineTriggered()));
   return true;
 }
 

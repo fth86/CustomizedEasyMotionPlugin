@@ -32,6 +32,7 @@
 #include <QPair>
 #include <algorithm>
 
+#include "EasyMotionTextEdit.h"
 #include "EasyMotionTarget.h"
 
 #define EDITOR(e) ((m_plainEdit != NULL) ? m_plainEdit->e : m_textEdit->e)
@@ -47,19 +48,20 @@ public:
   ~EasyMotionHandler() {}
 
 public slots:
-  void easyMotionForCurrentLineTriggered(void);
+//  void easyMotionForCurrentLineTriggered(void);
   void easyMotionForEntireScreenTriggered(void);
+  void numberKeyPressedSlot(QChar num);
+  void nonNumberKeypressedSlot();
 
 private slots:
   void doInstallEventFilter();
-  void findFakeVimStatusWidget();
+  void resetEasyMotion();
+  void enterPressedSlot();
 
 private:
-  QLabel* someLabel;
 
   void installEventFilter();
   void initEasyMotion();
-  void resetEasyMotion(void);
 
   bool isVisualMode() const;
 
@@ -79,10 +81,13 @@ private:
     WaitForInputTargetCode
   };
 
+  QTextEdit* m_debugWindow;
+  void updateDebugWindow();
+
+  EasyMotionTextEdit* m_feedbackTextEdit;
   Core::IEditor *m_currentEditor;
   QPlainTextEdit *m_plainEdit;
   QTextEdit *m_textEdit;
-  QLabel *m_fakeVimStatusWidget;
   EasyMotionState m_state;
   EasyMotion::EasyMotionTarget m_target;
   int m_easyMotionSearchRange;
